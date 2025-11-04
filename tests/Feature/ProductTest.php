@@ -36,7 +36,8 @@ test('users can view products index', function () {
     actingAs($this->user)
         ->get(route('products.index'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('Products/Index')
+        ->assertInertia(
+            fn ($page) => $page->component('Products/Index')
             ->has('products.data', 3)
         );
 });

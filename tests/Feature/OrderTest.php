@@ -36,7 +36,8 @@ test('users can view their orders', function () {
     actingAs($this->user)
         ->get(route('orders.index'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->component('Orders/Index')
+        ->assertInertia(
+            fn ($page) => $page->component('Orders/Index')
             ->has('orders.data')
         );
 });
@@ -126,7 +127,8 @@ test('order total is calculated correctly', function () {
     $response = actingAs($this->user)
         ->get(route('orders.show', $this->order));
 
-    $response->assertInertia(fn ($page) => $page->component('Orders/Show')
+    $response->assertInertia(
+        fn ($page) => $page->component('Orders/Show')
         ->where('order.subtotal', $this->product->price * 2 + $product2->price)
     );
 });

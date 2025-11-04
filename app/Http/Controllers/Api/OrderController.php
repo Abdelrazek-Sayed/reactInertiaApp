@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -15,9 +14,9 @@ class OrderController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Order::class);
-        
+
         $orders = Order::query()
-            ->when(!auth()->user()->isAdmin(), function ($query) {
+            ->when(! auth()->user()->isAdmin(), function ($query) {
                 $query->where('user_id', auth()->id());
             })
             ->when(request('status'), function ($query, $status) {
@@ -52,7 +51,7 @@ class OrderController extends Controller
             // Add items to the order
             foreach ($validated['items'] as $item) {
                 $product = Product::findOrFail($item['product_id']);
-                
+
                 // Check if there's enough stock
                 if ($product->stock_quantity < $item['quantity']) {
                     throw new \Exception("Not enough stock for product: {$product->name}");
@@ -68,7 +67,7 @@ class OrderController extends Controller
                         'name' => $product->name,
                         'sku' => $product->sku,
                         'price' => $product->price,
-                    ]
+                    ],
                 ]);
 
                 // Update product stock
@@ -85,7 +84,7 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $this->authorize('view', $order);
-        
+
         return new OrderResource($order->load(['items', 'items.product']));
     }
 
@@ -113,24 +112,24 @@ class OrderController extends Controller
         $subtotal = $order->items()->sum('total_price');
         $shippingCost = $this->calculateShipping($order);
         $tax = $this->calculateTax($subtotal);
-        
+
         $order->update([
             'subtotal' => $subtotal,
             'shipping_cost' => $shippingCost,
             'tax' => $tax,
             'total' => $subtotal + $shippingCost + $tax,
         ]);
-        
+
         return $order;
     }
-    
+
     protected function calculateShipping(Order $order)
     {
         // Implement your shipping calculation logic here
         // This is a simple example - you might want to calculate based on weight, location, etc.
         return $order->items->sum('total_price') > 100 ? 0 : 10;
     }
-    
+
     protected function calculateTax($subtotal)
     {
         // Implement your tax calculation logic here

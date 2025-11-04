@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\OrderItem;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,7 +24,7 @@ class Order extends Model
         'shipping_state',
         'shipping_zip',
         'shipping_country',
-        'notes'
+        'notes',
     ];
 
     protected $casts = [

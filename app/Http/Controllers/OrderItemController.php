@@ -22,7 +22,7 @@ class OrderItemController extends Controller
 
         return DB::transaction(function () use ($order, $validated) {
             $product = Product::findOrFail($validated['product_id']);
-            
+
             // Check if product is already in the order
             $existingItem = $order->items()
                 ->where('product_id', $product->id)
@@ -46,7 +46,7 @@ class OrderItemController extends Controller
                         'name' => $product->name,
                         'sku' => $product->sku,
                         'price' => $product->price,
-                    ]
+                    ],
                 ]);
                 $order->items()->save($item);
             }
@@ -59,7 +59,7 @@ class OrderItemController extends Controller
 
             return response()->json([
                 'message' => 'Item added to order successfully',
-                'item' => $item->load('product')
+                'item' => $item->load('product'),
             ]);
         });
     }
@@ -75,7 +75,7 @@ class OrderItemController extends Controller
 
         if ($item->order_id !== $order->id) {
             return response()->json([
-                'message' => 'Item does not belong to this order'
+                'message' => 'Item does not belong to this order',
             ], 422);
         }
 
@@ -87,14 +87,14 @@ class OrderItemController extends Controller
             if ($quantityDifference > $product->stock_quantity) {
                 return response()->json([
                     'message' => 'Not enough stock available',
-                    'available' => $product->stock_quantity
+                    'available' => $product->stock_quantity,
                 ], 422);
             }
 
             // Update item
             $item->update([
                 'quantity' => $validated['quantity'],
-                'total_price' => $item->unit_price * $validated['quantity']
+                'total_price' => $item->unit_price * $validated['quantity'],
             ]);
 
             // Update product stock
@@ -107,7 +107,7 @@ class OrderItemController extends Controller
 
             return response()->json([
                 'message' => 'Item updated successfully',
-                'item' => $item->load('product')
+                'item' => $item->load('product'),
             ]);
         });
     }
@@ -119,7 +119,7 @@ class OrderItemController extends Controller
     {
         if ($item->order_id !== $order->id) {
             return response()->json([
-                'message' => 'Item does not belong to this order'
+                'message' => 'Item does not belong to this order',
             ], 422);
         }
 
@@ -135,7 +135,7 @@ class OrderItemController extends Controller
             $this->updateOrderTotals($order);
 
             return response()->json([
-                'message' => 'Item removed from order successfully'
+                'message' => 'Item removed from order successfully',
             ]);
         });
     }

@@ -35,7 +35,7 @@ class OrderPolicy
     public function delete(User $user, Order $order)
     {
         // Users can cancel their own orders, admins can delete any
-        return ($user->id === $order->user_id && $order->status === 'pending') || 
+        return ($user->id === $order->user_id && $order->status === 'pending') ||
                $user->can('delete orders');
     }
 

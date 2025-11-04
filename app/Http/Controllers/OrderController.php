@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class OrderController extends Controller
 {
@@ -20,9 +20,9 @@ class OrderController extends Controller
         $orders = Order::with(['user', 'items.product'])
             ->latest()
             ->paginate(10);
-            
+
         return Inertia::render('Orders/Index', [
-            'orders' => $orders
+            'orders' => $orders,
         ]);
     }
 
@@ -34,9 +34,9 @@ class OrderController extends Controller
         $products = Product::where('is_active', true)
             ->select('id', 'name', 'price', 'stock_quantity', 'sku')
             ->get();
-            
+
         return Inertia::render('Orders/Create', [
-            'products' => $products
+            'products' => $products,
         ]);
     }
 
@@ -63,7 +63,7 @@ class OrderController extends Controller
         return DB::transaction(function () use ($validated) {
             // Create order
             $order = new Order([
-                'order_number' => 'ORD-' . strtoupper(Str::random(10)),
+                'order_number' => 'ORD-'.strtoupper(Str::random(10)),
                 'user_id' => auth()->id() ?? null,
                 'status' => 'pending',
                 'shipping_name' => $validated['customer_name'],
@@ -94,7 +94,7 @@ class OrderController extends Controller
                         'name' => $product->name,
                         'sku' => $product->sku,
                         'price' => $product->price,
-                    ]
+                    ],
                 ]);
 
                 $subtotal += $itemTotal;
@@ -130,9 +130,9 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $order->load(['items.product', 'user']);
-        
+
         return Inertia::render('Orders/Show', [
-            'order' => $order
+            'order' => $order,
         ]);
     }
 

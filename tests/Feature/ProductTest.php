@@ -3,6 +3,7 @@
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
@@ -15,7 +16,7 @@ beforeEach(function () {
         'price' => 99.99,
         'sku' => 'TEST123',
         'stock_quantity' => 100,
-        'is_active' => true
+        'is_active' => true,
     ];
 });
 
@@ -31,13 +32,12 @@ test('guests cannot access product management', function () {
 
 test('users can view products index', function () {
     $products = Product::factory()->count(3)->create();
-    
+
     actingAs($this->user)
         ->get(route('products.index'))
         ->assertOk()
-        ->assertInertia(fn ($page) => 
-            $page->component('Products/Index')
-                ->has('products.data', 3)
+        ->assertInertia(fn ($page) => $page->component('Products/Index')
+            ->has('products.data', 3)
         );
 });
 
@@ -57,7 +57,7 @@ test('product creation requires valid data', function () {
 
 test('users can update products', function () {
     $product = Product::factory()->create();
-    
+
     actingAs($this->user)
         ->put(route('products.update', $product), ['name' => 'Updated Name'] + $product->toArray())
         ->assertRedirect(route('products.index'));
@@ -67,7 +67,7 @@ test('users can update products', function () {
 
 test('users can delete products', function () {
     $product = Product::factory()->create();
-    
+
     actingAs($this->user)
         ->delete(route('products.destroy', $product))
         ->assertRedirect(route('products.index'));

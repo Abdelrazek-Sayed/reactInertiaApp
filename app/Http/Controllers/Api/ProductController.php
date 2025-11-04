@@ -13,12 +13,12 @@ class ProductController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Product::class);
-        
+
         $products = Product::query()
             ->when(request('search'), function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%")
-                      ->orWhere('sku', 'like', "%{$search}%");
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('sku', 'like', "%{$search}%");
             })
             ->when(request('active'), function ($query, $active) {
                 $query->where('is_active', filter_var($active, FILTER_VALIDATE_BOOLEAN));
@@ -39,7 +39,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'sku' => 'required|string|unique:products,sku',
             'stock_quantity' => 'required|integer|min:0',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $product = Product::create($validated);
@@ -50,6 +50,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         $this->authorize('view', $product);
+
         return new ProductResource($product);
     }
 
@@ -61,9 +62,9 @@ class ProductController extends Controller
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
-            'sku' => 'sometimes|string|unique:products,sku,' . $product->id,
+            'sku' => 'sometimes|string|unique:products,sku,'.$product->id,
             'stock_quantity' => 'sometimes|integer|min:0',
-            'is_active' => 'sometimes|boolean'
+            'is_active' => 'sometimes|boolean',
         ]);
 
         $product->update($validated);
@@ -79,9 +80,10 @@ class ProductController extends Controller
             // Check if product is in any orders
             if ($product->orderItems()->exists()) {
                 $product->update(['is_active' => false]);
+
                 return response()->json([
                     'message' => 'Product deactivated because it exists in orders',
-                    'product' => new ProductResource($product)
+                    'product' => new ProductResource($product),
                 ]);
             }
 

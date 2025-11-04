@@ -20,16 +20,16 @@ class OrderItemPolicy
     public function updateItem(User $user, Order $order, OrderItem $item)
     {
         // Only allow updating items in pending orders
-        return $user->id === $order->user_id && 
-               $order->status === 'pending' && 
+        return $user->id === $order->user_id &&
+               $order->status === 'pending' &&
                $item->order_id === $order->id;
     }
 
     public function removeItem(User $user, Order $order, OrderItem $item)
     {
         // Only allow removing items from pending orders
-        return $user->id === $order->user_id && 
-               $order->status === 'pending' && 
+        return $user->id === $order->user_id &&
+               $order->status === 'pending' &&
                $item->order_id === $order->id;
     }
 }

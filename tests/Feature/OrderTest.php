@@ -5,6 +5,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
 use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
@@ -18,7 +19,7 @@ beforeEach(function () {
         'product_id' => $this->product->id,
         'quantity' => 1,
         'unit_price' => $this->product->price,
-        'total_price' => $this->product->price
+        'total_price' => $this->product->price,
     ]);
 });
 
@@ -35,9 +36,8 @@ test('users can view their orders', function () {
     actingAs($this->user)
         ->get(route('orders.index'))
         ->assertOk()
-        ->assertInertia(fn ($page) => 
-            $page->component('Orders/Index')
-                ->has('orders.data')
+        ->assertInertia(fn ($page) => $page->component('Orders/Index')
+            ->has('orders.data')
         );
 });
 
@@ -46,9 +46,9 @@ test('users can create orders', function () {
         'items' => [
             [
                 'product_id' => $this->product->id,
-                'quantity' => 2
-            ]
-        ]
+                'quantity' => 2,
+            ],
+        ],
     ];
 
     actingAs($this->user)
@@ -62,14 +62,14 @@ test('users can create orders', function () {
 
 test('users can update order status', function () {
     $newStatus = 'processing';
-    
+
     actingAs($this->user)
         ->post(route('orders.status', $this->order), ['status' => $newStatus])
         ->assertRedirect(route('orders.show', $this->order));
 
     $this->assertDatabaseHas('orders', [
         'id' => $this->order->id,
-        'status' => $newStatus
+        'status' => $newStatus,
     ]);
 });
 
@@ -87,7 +87,7 @@ test('order items can be managed', function () {
     actingAs($this->user)
         ->post(route('orders.items.add', $this->order), [
             'product_id' => $this->product->id,
-            'quantity' => 1
+            'quantity' => 1,
         ])
         ->assertOk();
 
@@ -95,7 +95,7 @@ test('order items can be managed', function () {
     $item = $this->order->items()->first();
     actingAs($this->user)
         ->put(route('orders.items.update', [$this->order, $item]), [
-            'quantity' => 2
+            'quantity' => 2,
         ])
         ->assertOk();
 
@@ -107,27 +107,26 @@ test('order items can be managed', function () {
 
 test('order total is calculated correctly', function () {
     $product2 = Product::factory()->create(['price' => 50]);
-    
+
     // Add two items to order
     $this->order->items()->create([
         'product_id' => $this->product->id,
         'quantity' => 2,
         'unit_price' => $this->product->price,
-        'total_price' => $this->product->price * 2
+        'total_price' => $this->product->price * 2,
     ]);
-    
+
     $this->order->items()->create([
         'product_id' => $product2->id,
         'quantity' => 1,
         'unit_price' => $product2->price,
-        'total_price' => $product2->price
+        'total_price' => $product2->price,
     ]);
-    
+
     $response = actingAs($this->user)
         ->get(route('orders.show', $this->order));
-    
-    $response->assertInertia(fn ($page) => 
-        $page->component('Orders/Show')
-            ->where('order.subtotal', $this->product->price * 2 + $product2->price)
+
+    $response->assertInertia(fn ($page) => $page->component('Orders/Show')
+        ->where('order.subtotal', $this->product->price * 2 + $product2->price)
     );
 });

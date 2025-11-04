@@ -25,12 +25,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Products API
     Route::apiResource('products', ApiProductController::class);
-    
+
     // Orders API
     Route::apiResource('orders', ApiOrderController::class);
     Route::post('orders/{order}/status', [OrderController::class, 'updateStatus'])
         ->name('api.orders.status');
-    
+
     // Order Items API
     Route::prefix('orders/{order}/items')->group(function () {
         Route::post('/', [OrderItemController::class, 'addItem'])

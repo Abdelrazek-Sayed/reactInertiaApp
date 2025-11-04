@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -15,8 +14,9 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::latest()->paginate(10);
+
         return Inertia::render('Products/Index', [
-            'products' => $products
+            'products' => $products,
         ]);
     }
 
@@ -40,7 +40,7 @@ class ProductController extends Controller
             'stock_quantity' => 'required|integer|min:0',
             'sku' => 'required|string|unique:products,sku',
             'image' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $product = Product::create($validated);
@@ -55,7 +55,7 @@ class ProductController extends Controller
     public function show(Product $product)
     {
         return Inertia::render('Products/Show', [
-            'product' => $product
+            'product' => $product,
         ]);
     }
 
@@ -65,7 +65,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         return Inertia::render('Products/Edit', [
-            'product' => $product
+            'product' => $product,
         ]);
     }
 
@@ -79,9 +79,9 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock_quantity' => 'required|integer|min:0',
-            'sku' => 'required|string|unique:products,sku,' . $product->id,
+            'sku' => 'required|string|unique:products,sku,'.$product->id,
             'image' => 'nullable|string',
-            'is_active' => 'boolean'
+            'is_active' => 'boolean',
         ]);
 
         $product->update($validated);
@@ -96,7 +96,7 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
-        
+
         return redirect()->route('products.index')
             ->with('success', 'Product deleted successfully.');
     }

@@ -132,6 +132,9 @@ jobs:
           key: composer-${{ hashFiles('composer.lock') }}
           restore-keys: composer-
 
+      - name: Install Pest
+        run: composer require --dev pestphp/pest:v2.36.1 pestphp/pest-plugin-laravel --with-dependencies
+
       - name: Execute Tests
         run: php artisan test
         env:

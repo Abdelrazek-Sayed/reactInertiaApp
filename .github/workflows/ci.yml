@@ -18,8 +18,7 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, xml, bcmath, sqlsrv, pdo_sqlsrv
-        env:
-          php-version: 8.2
+          key: php-82
 
       - name: Install Composer Dependencies
         run: composer install --no-progress --prefer-dist
@@ -36,8 +35,7 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, xml, bcmath, sqlsrv, pdo_sqlsrv
-        env:
-          php-version: 8.2
+          key: php-82
 
       - name: Copy .env
         run: cp .env.example .env
@@ -70,8 +68,7 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, xml, bcmath, sqlsrv, pdo_sqlsrv
-        env:
-          php-version: 8.2
+          key: php-82
 
       - name: Run Migrations
         run: php artisan migrate --force
@@ -105,8 +102,7 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, xml, bcmath, sqlsrv, pdo_sqlsrv
-        env:
-          php-version: 8.2
+          key: php-82
 
       - name: Execute Tests
         run: php artisan test
@@ -130,8 +126,7 @@ jobs:
         with:
           php-version: '8.2'
           extensions: mbstring, xml, bcmath, sqlsrv, pdo_sqlsrv
-        env:
-          php-version: 8.2
+          key: php-82
 
       - name: Code Style
         run: ./vendor/bin/pint --test --preset laravel
